@@ -1,6 +1,11 @@
 import json
 import os
+from pathlib import Path
+from urllib.parse import quote
+import tempfile
 import unicodedata
+import shutil
+import sqlite3
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent
@@ -12,7 +17,13 @@ from ulauncher.api.shared.action.SetUserQueryAction import SetUserQueryAction
 BOOKMARKS_PATH = os.path.expanduser(
     "~/.config/google-chrome/Default/Bookmarks")
 
+FAVICONS_DB = os.path.expanduser("~/.config/google-chrome/Default/Favicons")
+
 MAX_ITEMS = 10
+
+CACHE_DIR = os.path.expanduser("~/.cache/ulauncher_favicons")
+
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 
 class ChromeBookmarksExtension(Extension):
@@ -51,9 +62,49 @@ def append_folder(items, item, base_path):
     ))
 
 
+def get_favicon(url):
+    safe_name = quote(url, safe="")
+    cache_file = os.path.join(CACHE_DIR, f"{safe_name}.png")
+
+    if os.path.exists(cache_file):
+        return cache_file
+
+    if not Path(FAVICONS_DB).exists():
+        return "icons/chrome.png"
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
+            shutil.copy(FAVICONS_DB, tmpfile.name)
+            TEMP_DB = tmpfile.name
+
+        conn = sqlite3.connect(TEMP_DB)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT fb.image_data
+            FROM icon_mapping im
+            JOIN favicon_bitmaps fb ON im.icon_id = fb.icon_id
+            WHERE im.page_url LIKE ?
+            ORDER BY fb.width DESC, fb.last_updated DESC
+            LIMIT 1
+        """, (f"%{url}%",))
+        row = cur.fetchone()
+        conn.close()
+
+        os.unlink(TEMP_DB)
+
+        if row:
+            with open(cache_file, "wb") as f:
+                f.write(row[0])
+            return cache_file
+    except Exception as e:
+        print("Error reading Chrome favicon:", e)
+
+    return "icons/chrome.png"
+
+
 def append_url(items, item):
     items.append(ExtensionResultItem(
-        icon="icons/chrome.png",
+        icon=get_favicon(item["url"]),
         name=item["name"],
         description=remove_url_prefix(item["url"]),
         on_enter=OpenUrlAction(item["url"])
