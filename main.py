@@ -117,6 +117,7 @@ def get_profile_path(keyword, extension):
             break
     return pref_id
 
+
 def clear_cache():
     if os.path.exists(CACHE_DIR):
         shutil.rmtree(CACHE_DIR)
@@ -130,12 +131,12 @@ def get_bookmark_items(query="", event=None, extension=None):
 
     keyword = event.get_keyword()
 
-    if keyword == extension.preferences['kw_clear_cache']:
+    if keyword == extension.preferences['kw_clear_favicon_cache']:
         cleaned = clear_cache()
         return [ExtensionResultItem(
             icon="icons/logo.png",
-            name="Cache cleared" if cleaned else "No cache to clear",
-            description="Luneta Browser Bookmark favicon cache has been reset",
+            name="Favicon cache cleared" if cleaned else "No favicon cache to clear",
+            description="Luneta Browser Bookmark favicon cache has been reset" if cleaned else "There was no favicon cache to clear"
         )]
 
     profile_path = extension.preferences.get(

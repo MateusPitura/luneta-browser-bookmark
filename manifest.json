@@ -12,37 +12,43 @@
       "id": "kw_default",
       "type": "keyword",
       "name": "Default profile",
-      "default_value": "bd"
+      "default_value": "bd",
+      "description": "Keyword to search in the default profile"
     },
     {
       "id": "kw_default_path",
       "type": "input",
       "name": "Default profile path",
-      "default_value": "~/.config/google-chrome/Default/"
+      "default_value": "~/.config/google-chrome/Default/",
+      "description": "Path to the default profile"
+    },
+    {
+      "id": "kw_1",
+      "type": "keyword",
+      "name": "Profile 1",
+      "default_value": "b1",
+      "description": "Keyword to search in profile 1"
+    },
+    {
+      "id": "kw_1_path",
+      "type": "input",
+      "name": "Profile 1 path",
+      "default_value": "~/.config/google-chrome/Profile 1/",
+      "description": "Path to profile 1"
     },
     {
       "id": "kw_2",
       "type": "keyword",
-      "name": "Profile 1",
-      "default_value": "b1"
+      "name": "Profile 2",
+      "default_value": "b2",
+      "description": "Keyword to search in profile 2"
     },
     {
       "id": "kw_2_path",
       "type": "input",
-      "name": "Profile 1 path",
-      "default_value": "~/.config/google-chrome/Profile 1/"
-    },
-    {
-      "id": "kw_3",
-      "type": "keyword",
-      "name": "Profile 2",
-      "default_value": "b2"
-    },
-    {
-      "id": "kw_3_path",
-      "type": "input",
       "name": "Profile 2 path",
-      "default_value": "~/.config/google-chrome/Profile 2/"
+      "default_value": "~/.config/google-chrome/Profile 2/",
+      "description": "Path to profile 2"
     },
     {
       "id": "max_results",
@@ -52,11 +58,11 @@
       "description": "The extension will show up to this number of items in the list. Leave empty for no limit."
     },
     {
-      "id": "kw_clear_cache",
+      "id": "kw_clear_favicon_cache",
       "type": "keyword",
       "name": "Clear Luneta Browser Bookmark favicon cache",
       "description": "Click to clear Luneta Browser Bookmark favicon cache",
-      "default_value": "clear_luneta_browser_bookmark_cache"
+      "default_value": "clear_favicon_cache"
     }
   ]
 }
