@@ -9,7 +9,7 @@ import sqlite3
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent
-from ulauncher.api.shared.action.OpenUrlAction import OpenUrlAction
+from ulauncher.api.shared.action.RunScriptAction import RunScriptAction
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.SetUserQueryAction import SetUserQueryAction
@@ -101,11 +101,20 @@ def get_favicon(url, event, extension):
 
 
 def append_url(items, item, event, extension):
+    keyword = event.get_keyword()
+
+    profile_path = extension.preferences.get(
+        f"{get_profile_path(keyword, extension)}_path")
+    
+    profile = os.path.basename(os.path.normpath(profile_path))
+
+    chrome_cmd = f'google-chrome --profile-directory="{profile}" "{item["url"]}"'
+
     items.append(ExtensionResultItem(
         icon=get_favicon(item["url"], event, extension),
         name=item["name"],
         description=remove_url_prefix(item["url"]),
-        on_enter=OpenUrlAction(item["url"])
+        on_enter=RunScriptAction(chrome_cmd, [])
     ))
 
 
