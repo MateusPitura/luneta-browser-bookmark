@@ -3,7 +3,7 @@
   "name": "Luneta Browser Bookmark",
   "description": "Search, navigate and open browser bookmarks.",
   "developer_name": "Mateus Pitura",
-  "icon": "icons/logo.png",
+  "icon": "images/logo.png",
   "options": {
     "query_debounce": 0.2
   },

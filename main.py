@@ -51,7 +51,7 @@ def append_folder(items, item, base_path, event):
     keyword = event.get_keyword()
 
     items.append(ExtensionResultItem(
-        icon="icons/folder.png",
+        icon="images/folder.png",
         name=item["name"],
         description="Click to enter folder",
         on_enter=SetUserQueryAction(f"{keyword} {base_path}{item["name"]}/")
@@ -71,7 +71,7 @@ def get_favicon(url, event, extension):
     favicon_path = os.path.expanduser(f"{profile_path.rstrip("/")}/Favicons")
 
     if not Path(favicon_path).exists():
-        return "icons/chrome.png"
+        return "images/chrome.png"
 
     with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
         shutil.copy(favicon_path, tmpfile.name)
@@ -97,7 +97,7 @@ def get_favicon(url, event, extension):
             f.write(row[0])
         return cache_file
 
-    return "icons/chrome.png"
+    return "images/chrome.png"
 
 
 def append_url(items, item, event, extension):
@@ -143,7 +143,7 @@ def get_bookmark_items(query="", event=None, extension=None):
     if keyword == extension.preferences['kw_clear_favicon_cache']:
         cleaned = clear_cache()
         return [ExtensionResultItem(
-            icon="icons/logo.png",
+            icon="images/logo.png",
             name="Favicon cache cleared" if cleaned else "No favicon cache to clear",
             description="Luneta Browser Bookmark favicon cache has been reset" if cleaned else "There was no favicon cache to clear"
         )]
@@ -225,7 +225,7 @@ class KeywordQueryEventListener(EventListener):
 
         except Exception as e:
             items.append(ExtensionResultItem(
-                icon="icons/logo.png",
+                icon="images/logo.png",
                 name="Error reading bookmarks",
                 description=str(e)
             ))
