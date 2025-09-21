@@ -50,6 +50,13 @@
       "name": "Items limit",
       "default_value": "10",
       "description": "The extension will show up to this number of items in the list. Leave empty for no limit."
+    },
+    {
+      "id": "kw_clear_cache",
+      "type": "keyword",
+      "name": "Clear Luneta Browser Bookmark favicon cache",
+      "description": "Click to clear Luneta Browser Bookmark favicon cache",
+      "default_value": "clear_luneta_browser_bookmark_cache"
     }
   ]
 }

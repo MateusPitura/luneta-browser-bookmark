@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from urllib.parse import quote
+import hashlib
 import tempfile
 import unicodedata
 import shutil
@@ -59,7 +59,7 @@ def append_folder(items, item, base_path, event):
 
 
 def get_favicon(url, event, extension):
-    safe_name = quote(url, safe="")
+    safe_name = hashlib.md5(url.encode()).hexdigest()
     cache_file = os.path.join(CACHE_DIR, f"{safe_name}.png")
 
     if os.path.exists(cache_file):
@@ -117,11 +117,27 @@ def get_profile_path(keyword, extension):
             break
     return pref_id
 
+def clear_cache():
+    if os.path.exists(CACHE_DIR):
+        shutil.rmtree(CACHE_DIR)
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        return True
+    return False
+
 
 def get_bookmark_items(query="", event=None, extension=None):
     query = query.strip()
 
     keyword = event.get_keyword()
+
+    if keyword == extension.preferences['kw_clear_cache']:
+        cleaned = clear_cache()
+        return [ExtensionResultItem(
+            icon="icons/logo.png",
+            name="Cache cleared" if cleaned else "No cache to clear",
+            description="Luneta Browser Bookmark favicon cache has been reset",
+        )]
+
     profile_path = extension.preferences.get(
         f"{get_profile_path(keyword, extension)}_path")
     bookmarks_path = os.path.expanduser(
