@@ -1,18 +1,55 @@
 {
   "required_api_version": "^2.0.0",
-  "name": "Pitura",
-  "description": "A simple example extension",
-  "developer_name": "Your Name",
-  "icon": "icons/icon.png",
+  "name": "Luneta Browser Bookmark",
+  "description": "Search, navigate and open browser bookmarks.",
+  "developer_name": "Mateus Pitura",
+  "icon": "icons/logo.png",
   "options": {
     "query_debounce": 0.2
   },
   "preferences": [
     {
-      "id": "kw",
+      "id": "kw_default",
       "type": "keyword",
-      "name": "Pitura Keyword",
-      "default_value": "pitura"
+      "name": "Default profile",
+      "default_value": "bd"
+    },
+    {
+      "id": "kw_default_path",
+      "type": "input",
+      "name": "Default profile path",
+      "default_value": "~/.config/google-chrome/Default/"
+    },
+    {
+      "id": "kw_2",
+      "type": "keyword",
+      "name": "Profile 1",
+      "default_value": "b1"
+    },
+    {
+      "id": "kw_2_path",
+      "type": "input",
+      "name": "Profile 1 path",
+      "default_value": "~/.config/google-chrome/Profile 1/"
+    },
+    {
+      "id": "kw_3",
+      "type": "keyword",
+      "name": "Profile 2",
+      "default_value": "b2"
+    },
+    {
+      "id": "kw_3_path",
+      "type": "input",
+      "name": "Profile 2 path",
+      "default_value": "~/.config/google-chrome/Profile 2/"
+    },
+    {
+      "id": "max_results",
+      "type": "input",
+      "name": "Items limit",
+      "default_value": "10",
+      "description": "The extension will show up to this number of items in the list. Leave empty for no limit."
     }
   ]
 }

@@ -14,21 +14,15 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.SetUserQueryAction import SetUserQueryAction
 
-BOOKMARKS_PATH = os.path.expanduser(
-    "~/.config/google-chrome/Default/Bookmarks")
-
-FAVICONS_DB = os.path.expanduser("~/.config/google-chrome/Default/Favicons")
-
-MAX_ITEMS = 10
-
-CACHE_DIR = os.path.expanduser("~/.cache/ulauncher_favicons")
+CACHE_DIR = os.path.expanduser(
+    "~/.cache/ulauncher_luneta-browser-bookmark_favicons")
 
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 
-class ChromeBookmarksExtension(Extension):
+class LunetaBrowserBookmark(Extension):
     def __init__(self):
-        super(ChromeBookmarksExtension, self).__init__()
+        super(LunetaBrowserBookmark, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
 
 
@@ -53,68 +47,87 @@ def contains_ignore_accents(a, b):
     return b_norm in a_norm
 
 
-def append_folder(items, item, base_path):
+def append_folder(items, item, base_path, event):
+    keyword = event.get_keyword()
+
     items.append(ExtensionResultItem(
         icon="icons/folder.png",
         name=item["name"],
         description="Click to enter folder",
-        on_enter=SetUserQueryAction(f"pitura {base_path}{item["name"]}/")
+        on_enter=SetUserQueryAction(f"{keyword} {base_path}{item["name"]}/")
     ))
 
 
-def get_favicon(url):
+def get_favicon(url, event, extension):
     safe_name = quote(url, safe="")
     cache_file = os.path.join(CACHE_DIR, f"{safe_name}.png")
 
     if os.path.exists(cache_file):
         return cache_file
 
-    if not Path(FAVICONS_DB).exists():
+    keyword = event.get_keyword()
+    profile_path = extension.preferences.get(
+        f"{get_profile_path(keyword, extension)}_path")
+    favicon_path = os.path.expanduser(f"{profile_path.rstrip("/")}/Favicons")
+
+    if not Path(favicon_path).exists():
         return "icons/chrome.png"
 
-    try:
-        with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
-            shutil.copy(FAVICONS_DB, tmpfile.name)
-            TEMP_DB = tmpfile.name
+    with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
+        shutil.copy(favicon_path, tmpfile.name)
+        temp_db = tmpfile.name
 
-        conn = sqlite3.connect(TEMP_DB)
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT fb.image_data
-            FROM icon_mapping im
-            JOIN favicon_bitmaps fb ON im.icon_id = fb.icon_id
-            WHERE im.page_url LIKE ?
-            ORDER BY fb.width DESC, fb.last_updated DESC
-            LIMIT 1
-        """, (f"%{url}%",))
-        row = cur.fetchone()
-        conn.close()
+    conn = sqlite3.connect(temp_db)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT fb.image_data
+        FROM icon_mapping im
+        JOIN favicon_bitmaps fb ON im.icon_id = fb.icon_id
+        WHERE im.page_url LIKE ?
+        ORDER BY fb.width DESC, fb.last_updated DESC
+        LIMIT 1
+    """, (f"%{url}%",))
+    row = cur.fetchone()
+    conn.close()
 
-        os.unlink(TEMP_DB)
+    os.unlink(temp_db)
 
-        if row:
-            with open(cache_file, "wb") as f:
-                f.write(row[0])
-            return cache_file
-    except Exception as e:
-        print("Error reading Chrome favicon:", e)
+    if row:
+        with open(cache_file, "wb") as f:
+            f.write(row[0])
+        return cache_file
 
     return "icons/chrome.png"
 
 
-def append_url(items, item):
+def append_url(items, item, event, extension):
     items.append(ExtensionResultItem(
-        icon=get_favicon(item["url"]),
+        icon=get_favicon(item["url"], event, extension),
         name=item["name"],
         description=remove_url_prefix(item["url"]),
         on_enter=OpenUrlAction(item["url"])
     ))
 
 
-def get_bookmark_items(query=""):
+def get_profile_path(keyword, extension):
+    pref_id = None
+    for pid, value in extension.preferences.items():
+        if value == keyword:
+            pref_id = pid
+            break
+    return pref_id
+
+
+def get_bookmark_items(query="", event=None, extension=None):
     query = query.strip()
 
-    with open(BOOKMARKS_PATH, "r") as f:
+    keyword = event.get_keyword()
+    profile_path = extension.preferences.get(
+        f"{get_profile_path(keyword, extension)}_path")
+    bookmarks_path = os.path.expanduser(
+        f"{profile_path.rstrip("/")}/Bookmarks")
+
+    with open(bookmarks_path, "r") as f:
         data = json.load(f)
 
     node = data["roots"]["bookmark_bar"]["children"]
@@ -158,18 +171,22 @@ def get_bookmark_items(query=""):
     for item in node:
         if search_term is None:
             if item["type"] == "folder":
-                append_folder(items, item, base_path)
+                append_folder(items, item, base_path, event)
             elif item["type"] == "url":
-                append_url(items, item)
+                append_url(items, item, event, extension)
         else:
             if item["type"] == "folder":
                 if contains_ignore_accents(item["name"], search_term):
-                    append_folder(items, item, base_path)
+                    append_folder(items, item, base_path, event)
             elif item["type"] == "url":
                 if contains_ignore_accents(item["name"], search_term) or contains_ignore_accents(item["url"], search_term):
-                    append_url(items, item)
+                    append_url(items, item, event, extension)
 
-    return items[:MAX_ITEMS]
+    max_results = extension.preferences.get("max_results")
+
+    if max_results and max_results.isdigit():
+        return items[:int(max_results)]
+    return items
 
 
 class KeywordQueryEventListener(EventListener):
@@ -178,11 +195,11 @@ class KeywordQueryEventListener(EventListener):
         items = []
 
         try:
-            items = get_bookmark_items(query)
+            items = get_bookmark_items(query, event, extension)
 
         except Exception as e:
             items.append(ExtensionResultItem(
-                icon="icons/chrome.png",
+                icon="icons/logo.png",
                 name="Error reading bookmarks",
                 description=str(e)
             ))
@@ -191,4 +208,4 @@ class KeywordQueryEventListener(EventListener):
 
 
 if __name__ == "__main__":
-    ChromeBookmarksExtension().run()
+    LunetaBrowserBookmark().run()
