@@ -50,11 +50,13 @@ def contains_ignore_accents(a, b):
 def append_folder(items, item, base_path, event):
     keyword = event.get_keyword()
 
+    bookmark_name = item.get("name", "Unknown")
+
     items.append(ExtensionResultItem(
         icon="images/folder.png",
-        name=item["name"],
+        name=bookmark_name,
         description="Click to enter folder",
-        on_enter=SetUserQueryAction(f"{keyword} {base_path}{item["name"]}/")
+        on_enter=SetUserQueryAction(f"{keyword} {base_path}{bookmark_name}/")
     ))
 
 
@@ -105,15 +107,18 @@ def append_url(items, item, event, extension):
 
     profile_path = extension.preferences.get(
         f"{get_profile_path(keyword, extension)}_path")
-    
+
     profile = os.path.basename(os.path.normpath(profile_path))
 
-    chrome_cmd = f'google-chrome --profile-directory="{profile}" "{item["url"]}"'
+    bookmark_name = item.get("name", "Unknown")
+    bookmark_url = item.get("url", "www.example.com")
+
+    chrome_cmd = f'google-chrome --profile-directory="{profile}" "{bookmark_url}"'
 
     items.append(ExtensionResultItem(
-        icon=get_favicon(item["url"], event, extension),
-        name=item["name"],
-        description=remove_url_prefix(item["url"]),
+        icon=get_favicon(bookmark_url, event, extension),
+        name=bookmark_name,
+        description=remove_url_prefix(bookmark_url),
         on_enter=RunScriptAction(chrome_cmd, [])
     ))
 
@@ -165,7 +170,7 @@ def get_bookmark_items(query="", event=None, extension=None):
         for part in parts:
             found = None
             for item in node:
-                if item["type"] == "folder" and item["name"].lower() == part.lower():
+                if item.get("type", "") == "folder" and item.get("name", "").lower() == part.lower():
                     found = item.get("children", [])
                     break
             if found is None:
@@ -179,7 +184,7 @@ def get_bookmark_items(query="", event=None, extension=None):
                 for part in folders:
                     found = None
                     for item in node:
-                        if item["type"] == "folder" and item["name"].lower() == part.lower():
+                        if item.get("type", "") == "folder" and item.get("name", "").lower() == part.lower():
                             found = item.get("children", [])
                             break
                     if found is None:
@@ -195,17 +200,21 @@ def get_bookmark_items(query="", event=None, extension=None):
 
     items = []
     for item in node:
+        item_type = item.get("type", "")
+        bookmark_name = item.get("name", "Unknown")
+        bookmark_url = item.get("url", "")
+
         if search_term is None:
-            if item["type"] == "folder":
+            if item_type == "folder":
                 append_folder(items, item, base_path, event)
-            elif item["type"] == "url":
+            elif item_type == "url":
                 append_url(items, item, event, extension)
         else:
-            if item["type"] == "folder":
-                if contains_ignore_accents(item["name"], search_term):
+            if item_type == "folder":
+                if contains_ignore_accents(bookmark_name, search_term):
                     append_folder(items, item, base_path, event)
-            elif item["type"] == "url":
-                if contains_ignore_accents(item["name"], search_term) or contains_ignore_accents(item["url"], search_term):
+            elif item_type == "url":
+                if contains_ignore_accents(bookmark_name, search_term) or contains_ignore_accents(bookmark_url, search_term):
                     append_url(items, item, event, extension)
 
     max_results = extension.preferences.get("max_results")
