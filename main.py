@@ -70,7 +70,7 @@ def get_favicon(url, event, extension):
     keyword = event.get_keyword()
     profile_path = extension.preferences.get(
         f"{get_profile_path(keyword, extension)}_path")
-    favicon_path = os.path.expanduser(f"{profile_path.rstrip("/")}/Favicons")
+    favicon_path = os.path.expanduser(f"{profile_path.rstrip('/')}/Favicons")
 
     if not Path(favicon_path).exists():
         return "images/chrome.png"
@@ -156,7 +156,7 @@ def get_bookmark_items(query="", event=None, extension=None):
     profile_path = extension.preferences.get(
         f"{get_profile_path(keyword, extension)}_path")
     bookmarks_path = os.path.expanduser(
-        f"{profile_path.rstrip("/")}/Bookmarks")
+        f"{profile_path.rstrip('/')}/Bookmarks")
 
     with open(bookmarks_path, "r") as f:
         data = json.load(f)
