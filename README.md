@@ -11,8 +11,6 @@
   <img src="https://img.shields.io/github/stars/MateusPitura/luneta-browser-bookmark?style=social"> 
 </p> 
 
-> :construction: This app is under development :construction: 
-
 ## Description
 
 This ULauncher extension allows users to search and navigate their browser bookmarks directly from ULauncher. It supports browsing folders, displaying bookmark icons, and accessing multiple Chrome profiles.
