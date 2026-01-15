@@ -12,7 +12,7 @@
 
 ## Description
 
-This ULauncher extension allows users to search and navigate their browser bookmarks directly from ULauncher. It supports browsing folders, displaying bookmark icons, and accessing multiple Chrome profiles.
+This ULauncher extension allows users to search and navigate their browser bookmarks directly from ULauncher. It supports browsing folders, displaying bookmark icons, sort by last used and accessing multiple Chrome profiles
 
 - [Features](#features)
 - [How to Run](#how-to-run)
@@ -21,7 +21,7 @@ This ULauncher extension allows users to search and navigate their browser bookm
 
 ## Features 
 
-🔍 **Search bookmarks:** shows the website icon for each bookmark
+🔍 **Sort by last used:** shows the most recently used icons first
 
 📂 **Navigate folders:** browse bookmarks by folder structure
 

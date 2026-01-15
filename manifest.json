@@ -55,14 +55,29 @@
       "type": "input",
       "name": "Items limit",
       "default_value": "10",
-      "description": "The extension will show up to this number of items in the list. Leave empty for no limit."
+      "description": "The extension will show up to this number of items in the list. Leave empty for no limit"
     },
     {
-      "id": "kw_clear_favicon_cache",
-      "type": "keyword",
-      "name": "Clear Luneta Browser Bookmark favicon cache",
-      "description": "Click to clear Luneta Browser Bookmark favicon cache.",
-      "default_value": "clear_favicon_cache"
+      "id": "base_bookmark_path",
+      "type": "select",
+      "name": "Base Bookmark Path",
+      "description": "Choose which base path to use",
+      "default_value": "bookmark_bar",
+      "options": [
+        { "value": "bookmark_bar", "text": "Bookmarks Bar" },
+        { "value": "other", "text": "All Bookmarks" }
+      ]
+    },
+    {
+      "id": "update_last_used",
+      "type": "select",
+      "name": "Update Date Last Used of Bookmarks",
+      "description": "Update the date last used of bookmarks when they are opened so that recent bookmarks appear first in the results. However, this writes to the Chrome bookmarks file and can lead to issues",
+      "default_value": "false",
+      "options": [
+        { "value": "true", "text": "True" },
+        { "value": "false", "text": "False" }
+      ]
     }
   ]
 }
