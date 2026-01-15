@@ -61,7 +61,7 @@
       "id": "kw_clear_favicon_cache",
       "type": "keyword",
       "name": "Clear Luneta Browser Bookmark favicon cache",
-      "description": "Click to clear Luneta Browser Bookmark favicon cache",
+      "description": "Click to clear Luneta Browser Bookmark favicon cache.",
       "default_value": "clear_favicon_cache"
     }
   ]
