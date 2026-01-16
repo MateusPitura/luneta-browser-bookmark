@@ -269,8 +269,6 @@ def google_timestamp_now():
 
 def update_item_date(items, bookmark_id):
     for item in items:
-        print(f"🌠 id: {item.get("id")}")
-        print(f"🌠 bookmark_id: {bookmark_id}")
         if item.get("id") == bookmark_id:
             item["date_last_used"] = google_timestamp_now()
             return True
@@ -297,8 +295,6 @@ def update_chrome_bookmark_date(
         base_bookmark_path, {}).get("children", [])
 
     updated = update_item_date(children, bookmark_id)
-    print(f"🌠 children: {children}")
-    print(f"🌠 updated: {updated}")
     if not updated:
         return False
 
