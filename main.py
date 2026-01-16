@@ -297,6 +297,7 @@ def update_chrome_bookmark_date(
         base_bookmark_path, {}).get("children", [])
 
     updated = update_item_date(children, bookmark_id)
+    print(f"🌠 children: {children}")
     print(f"🌠 updated: {updated}")
     if not updated:
         return False
