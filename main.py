@@ -269,6 +269,8 @@ def google_timestamp_now():
 
 def update_item_date(items, bookmark_id):
     for item in items:
+        print(f"🌠 id: {item.get("id")}")
+        print(f"🌠 bookmark_id: {bookmark_id}")
         if item.get("id") == bookmark_id:
             item["date_last_used"] = google_timestamp_now()
             return True
