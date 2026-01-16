@@ -267,6 +267,20 @@ def google_timestamp_now():
     return str(microseconds)
 
 
+def update_item_date(items, bookmark_id):
+    for item in items:
+        if item.get("id") == bookmark_id:
+            item["date_last_used"] = google_timestamp_now()
+            return True
+
+        if item.get("type") == "folder":
+            children = item.get("children", [])
+            if update_item_date(children, bookmark_id):
+                return True
+
+    return False
+
+
 def update_chrome_bookmark_date(
     bookmarks_path,
     bookmark_id,
@@ -280,11 +294,8 @@ def update_chrome_bookmark_date(
     children = data.get("roots", {}).get(
         base_bookmark_path, {}).get("children", [])
 
-    for item in children:
-        if item.get("id") == bookmark_id:
-            item["date_last_used"] = google_timestamp_now()
-            break
-    else:
+    updated = update_item_date(children, bookmark_id)
+    if not updated:
         return False
 
     dir_name = os.path.dirname(bookmarks_path)
