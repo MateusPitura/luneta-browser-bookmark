@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Release-Oct%202025-green">  
   <img src="https://img.shields.io/badge/Version-0.1.0-blue">  
   <img src="https://img.shields.io/badge/Browser-Chrome-red">  
-  <img src="https://img.shields.io/github/stars/MateusPitura/luneta-browser-bookmark?style=social"> 
+  <img src="https://img.shields.io/github/stars/MateusPitura/extension-ulauncher-bookmark?style=social"> 
 </p> 
 
 ## Description
