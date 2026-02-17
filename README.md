@@ -33,7 +33,7 @@ This ULauncher extension allows users to search and navigate their browser bookm
 
 ## How to Run
 
-1. In [Ulauncher](https://ulauncher.io/) app settings add an extension with the link [https://github.com/MateusPitura/luneta-browser-bookmark](https://github.com/MateusPitura/luneta-browser-bookmark)
+1. In [Ulauncher](https://ulauncher.io/) app settings add an extension with the link [https://github.com/MateusPitura/extension-ulauncher-bookmark](https://github.com/MateusPitura/extension-ulauncher-bookmark)
 
 ## Technologies Used
 
